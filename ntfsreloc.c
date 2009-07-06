@@ -224,7 +224,7 @@ int main(int argc, char *argv[]) {
   if (opt_res) return opt_res;
 
   // verify that we can open the device in readonly mode
-  if (!(device = open(optDeviceName, (optWrite ? O_RDWR : O_RDONLY) | O_SYNC))) {
+  if ((device = open(optDeviceName, (optWrite ? O_RDWR : O_RDONLY) | O_SYNC)) < 0) {
     perror("open");
     return 2;
   }
