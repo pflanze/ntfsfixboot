@@ -1,0 +1,31 @@
+- it seems that Orgad Shaneh likes the name ntfsfixboot, which may
+  indeed be somewhat more fitting than ntfsreloc; the program
+  should thus probably be renamed to this name, too
+
+- when running on disk files (for example QEMU raw files), you can
+  (supposedly) use "fdisk -l $file" to get the geometry data; example:
+
+  $ fdisk -l /dev/mapper/plain-windows2000
+
+  Disk /dev/mapper/plain-windows2000: 4294 MB, 4294967296 bytes
+  128 heads, 63 sectors/track, 1040 cylinders
+  Units = cylinders of 8064 * 512 = 4128768 bytes
+  Disk identifier: 0x7c4aab41
+
+			   Device Boot      Start         End      Blocks   Id  System
+  /dev/mapper/plain-windows2000p1   *           1        1040     4193248+   7  HPFS/NTFS
+
+  (The device /dev/mapper/plain-windows2000p1 should be the same as
+  /dev/loop0p1; the latter resulted from losetup -f
+  /dev/mapper/plain-windows2000, with automatic partition table
+  recognition enabled in the kernel (modprobe loop max_part=100, put
+  'loop max_part=100' into /etc/modules to enable this automatically
+  on reboot).)
+
+  $ ntfsreloc -b -h 128 -t 63 -s 1 -w /dev/loop0p1
+
+- it didn't actually solve the problem with windows in QEMU hanging
+  after writing the "Booting from Hard Disk.." message, after increasing
+  the size of the disk and using gparted to increase the size of the
+  partition p1. (Neither did the recovery process from the w2k
+  installation disk help.)
